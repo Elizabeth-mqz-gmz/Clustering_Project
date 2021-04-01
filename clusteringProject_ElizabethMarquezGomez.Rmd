@@ -1,0 +1,273 @@
+---
+author: "Elizabeth Márquez Gómez"
+date: "10/04/21"
+output:
+  html_document:
+    df_print: paged
+    code_folding: show
+    self_contained: yes
+    theme: yeti
+    highlight: haddock
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+<h1 style="color:#4F76F7; font-family:courier; text-align:center; font-size:250%; background-color:#B8D5E6;">Proyecto Clustering</h1>
+<h4 style="color:#4FC2F7; font-family:courier;">Elizabeth Márquez Gómez</h4>
+
+El siguiente proyecto tiene como objetivo aplicar los conocimientos adquiridos en el cuarto módulo del programa de bioinformática en la *Licenciatura en Ciencias Genómicas, Universidad Nacional Autónoma de México.*
+
+<h2 style="color:#5390E0; font-family:courier; background-color:#CCECFF;">Introducción</h2>
+De las actividades más primitivas del ser humano, destaca aquella de clasificar objetos en ciertas categorías. A lo largo del tiempo, se han desarrollado diversas herramientas que nos permiten clasificar de manera más eficiente. Sin embargo, ninguna ha facilitado más esta tarea como lo es la computación.
+
+<h4 style="color:#4FC2F7; font-family:courier;">Análisis de Clustering</h4>
+El **análisis de Cluster** es comprende una amplia variedad de procedimienos que pueden usarse para crear una clasificación computarizada. Un método cluster es un procedimiento estadístico multivariante que comienza con un conjunto de datos conteniendo información sobre una muestra de entidades e intenta reorganizarlas en grupos relativamente homogéneos a los que llamaremos *clusters*.
+Lo que diferencia a un ***Análisis de Cluster*** de los demás métodos multivariantes de asignación y discriminación, es que este sabe poca o ninguna información sobre la estructura de las categorías.
+Por lo que a partir de una colección de observaciones, debe ordernarlas en grupos tales que el grado de asociación natural es alto entre los miembros del mismo grupo y bajo entre
+miembros de grupos diferentes.
+
+Las etapas a seguir para realizar un Análisis de Cluster pueden dividirse de la siguiente manera:
+
+1. ***Elección de variables***
+La elección del conjunto concreto de características que serán utilizadas para describir a cada elemento, esto servirá como marco de referencia para establecer clusters futuramente. 
+De igual manera, es importante tener en cuenta el número de variables a emplear, ya que es probable dar origen a problemas de análisis debido a la elección de un número alto de variables.
+Finalmente, es importante tomar en cuenta los tipos de datos de las variables a evaluar. Cuando las variables son de tipos diferentes se suele convertir todas las variables en binarias antes de calcular las similaridades. Esta técnica tiene la ventaja de ser muy clarificadora, pero la desventaja de sacrificar información. Una alternativa más atractiva es usar un coeficiente de similaridad que pueda incorporar información de diferentes tipos de variables de una forma sensible. Asimismo, para variables mixtas existe la posibilidad de hacer un análisis por separado e intentar sintetizar los resultados a partir de los diferentes estudios.
+
+2. ***Elección de la medida de asociación***
+Es necesario establecer una medida de asociación que permita medir a proximidad de los datos en el estudio. Es común encontrar estas proximidades por términos de distancias en análisis de individuos. Por el otro lado, en análisis de variables, se involucran medidas del tipo coeficiente de correlación.
+
+3. ***Elección de la técnica cluster a emplear en el estudio***
+Existe una amplia variedad de métodos de clusterización. Estos pueden clasificarse entre *jerárquicos* y *no jerárquicos*, donde los primeros realizan asignaciones a los elementos permanentes durante todo el proceso de clasificación, mientras que los no jerárquicos pueden hacer reasignaciones a clusters distintos en medio del proceso si esto fuera necesario.
+La elección dependerá de la naturaleza del problema a enfrentar, sin embargo, es conveniente en situaciones de aplicaciones prácticas, no elegir un sólo procedimiento, sino abarcar un amplio abanico de posibilidades y contrastar los resultados obtenidos con cada una de ellas. De este modo, si los resultados finales son parecidos, podremos obtener unas conclusiones mucho más válidas sobre la estructura natural de los datos.
+
+4. ***Validación de los resultados e interpretación de los mismos***
+Esta etapa es la más importante, pues de aquí se obtendrán las conclusiones definitivas del estudio. 
+En esta etapa se plantean dos problemas que ayudan al análisis de resultados:
+- *¿En qué medida representa la estructura final obtenida las similitudes o diferencias entre los objetos de estudio?*
+- *¿Cuál es el número idóneo de clusters que mejor representa la estructura natural de los datos?*
+
+El argumento más empleado para responder a la primera pregunta es el empleo del coeficiente de correlación cofenético, propuesto por Sokal y Rohlf en 1962. Dicho coeficiente mide la correlación entre las distancias iniciales, tomadas a partir de los datos originales, y las distancias finales con las cuales los individuos se han unido durante el desarrollo del método. Altos valores de tal coeficiente mostrarán que durante el proceso no ha ocurrido una gran perturbación en lo que concierne a la estructura original de los datos. En cuanto a la segunda pregunta, muchas son las técnicas existentes, algunas de las cuales, las más empleadas a nivel práctico.
+
+
+<h3 style="color:#5390E0; font-family:courier; background-color:#CCECFF;">1. Leer un archivo de secuencias homologas de proteínas en formato fasta.</h3>
+
+El archivo utilizado para el análisis es **ABC.faa**
+
+
+<h3 style="color:#5390E0; font-family:courier; background-color:#CCECFF;">2. Correr BLASTP de todas las secuencias contra todas las secuencias.</h3>
+
+Por medio del script de python3, **clusterization.py** *(consultar en "clusterization.html")*, se realizó la extracción de los datos de *ABC.faa* para correr blastp con la siguiente query:
+
+```
+blastp -query ABC.faa -subject ABC.faa -outfmt 7 -max_hsps 1 -use_sw_tback -evalue 100 -out ABC_blast_results.faa
+```
+
+
+<h3 style="color:#5390E0; font-family:courier; background-color:#CCECFF;">3. Generar una matriz de disimilitud (distancia) con base en los bit scores generados.</h3>
+
+El procesamiento de los datos obtenidos por medio de blastp fue realizado por medio del script, **clusterization.py**, el cuál genera la *matriz de disimilitud (distancia)* de los datos procesados.
+
+
+<h3 style="color:#5390E0; font-family:courier; background-color:#CCECFF;">4. Normalizar las disimilitudes (d) para que queden en el rango [0,1].</h3>
+
+El script **clusterization.py** también fue utilizado para normalizar las disimilitudes, finalmente genera un archivo output con la *matriz de disimilitud (distancia)* de los datos procesados y normalizados.
+
+
+<h3 style="color:#5390E0; font-family:courier; background-color:#CCECFF;">5. Correr clustering jerárquico y correr varios métodos para obtener el número de clusters.</h3>
+<h3 style="color:#5390E0; font-family:courier; background-color:#CCECFF;">6. Salvar el dendograma como árbol filogenético en formato Newick en R.</h3>
+
+```{r addLibraries}
+## Adding libraries
+library(cluster)
+suppressPackageStartupMessages(library(factoextra))
+suppressPackageStartupMessages(library(dendextend))
+suppressPackageStartupMessages(library(ape))
+```
+
+```{r readData}
+## Read dissimilarity matrix from ABC_matrix.csv
+inputData  <- read.table('ABC_matrix.csv', header = TRUE, sep = ",", quote="", row.names = 1)
+```
+
+```{r dendograms}
+## Functions for creation of clusters, determining number of clusters and plotting of information
+
+## Building dendogram with agnes - function
+agnesClustering <- function(clustMethod){
+  
+  main <- paste('agnes Dendrogram -', clustMethod, sep = ' ')
+  ## Creating clusters by "agnes" method
+  agnesClust <- agnes(inputData, method = clustMethod)
+  ## Plotting dendogram
+  pltree(agnesClust, cex = 0.6, hang = -1, main = main) 
+  ## Signaling clusters in dendogram
+  rect.hclust(as.hclust(agnesClust), k=4, border=2:4)
+  
+  ## Saving tree in Newick format
+  my_tree <- as.phylo(as.hclust(agnesClust))
+  write.tree(phy=my_tree, file=paste(clustMethod, '_tree.tree',sep = '')) 
+  
+  ## Saving agglomerative coefficient
+  agglomerativeCoeff <- agnesClust$ac
+  
+  return (agnesClust)
+}
+
+## Creating cluster agglomeration plot
+agglomPlot <- function(agnesClust){
+  
+  ## Plotting cluster agglomeration
+  aCls4 <- cutree(as.hclust(agnesClust), k = 4)
+  fviz_cluster(list(data = inputData, cluster = aCls4))
+}
+
+## Determining number of clusters
+numClust <- function(clustMethod){
+
+  #Methods: Total Within Sum of Squares (wss), silhouette, gap_stat
+  fviz_nbclust(inputData, FUN = hcut, hc_funs = 'agnes', hc_method = clustMethod, method = "silhouette", k.max = 5, print.summary = TRUE)
+  
+}
+```
+
+<h4 style="color:#4FC2F7; font-family:courier;">Single method</h4>
+El método ***"Single"*** demuestra un rendimiento no tan efectivo. En la gráfica *"Dendogram"* se nota la formación de 4 clusters, los dos de los extremos tienen un tamaño considerable, sin embargo se nota una desproporción con los dos del centro. Para la gráfica *"Cluster plot"*, es posible explicar la desproporción mencionada anteriormente, ya que se nota una superposición entre los clusters azul y verde, con una mayor proporción de elementos definidos como azul. Finalmente la gráfica *"Optimal number of clusters"* selecciona 5 clusters como el número más probable, por lo analizado en las anteriores, se puede entender esta conclusión, sin embargo, no es correcta. El coeficiente aglomerativo es de *0.5883*, podría ser considerado bajo.
+```{r single}
+## Getting dendogram
+ clust <- agnesClustering('single')
+
+## Getting agglomerative plot
+ agglomPlot(clust)
+ 
+## Getting number of clusters plot
+ numClust('single')
+ 
+## Showing agglomerative coefficient
+ print(paste('The agglomerative coefficient for single method is: ', clust$ac,sep = ''))
+```
+![Single tree](./single_tree2.png)
+
+De igual manera, el error de clusterización es observable en el *dendograma de árbol filogenético*. El cuadro rojo señala la región donde se modulariza la clusterización entre la clasificación azul y verde.
+
+
+<h4 style="color:#4FC2F7; font-family:courier;">Average method</h4>
+El método ***"Average"*** demuestra una mejor clusterización, desde la gráfica *"Dendogram"* es posible observar una buena definición de 4 clusters, con tamaños proporcionales. Posteriormente la gráfica *"Cluster plot"* modulariza perfectamente el plot en 4 clusters con distancias considerables, a excepción de los clusters verde y morado, donde es posible encontrar una distancia más cercana, sin embargo no hay sobrelape entre estos. Finalmente, la gráfica **"Optimal number of clusters"** predice correctamente 4 como el número optimo de clusters para la muestra dada. El coeficiente aglomerativo es de *0.6850*, en comparación al obtenido por el método *"Single"*, el actual es más alto, se considera bueno porque no es tan bajo pero tampoco tan alto.
+```{r average}
+## Getting dendogram
+ clust <- agnesClustering('average')
+
+## Getting agglomerative plot
+ agglomPlot(clust)
+ 
+## Getting number of clusters plot
+ numClust('average')
+ 
+## Showing agglomerative coefficient
+ print(paste('The agglomerative coefficient for average method is: ', clust$ac,sep = ''))
+```
+![Average tree](./average_tree2.png)
+
+A partir del *dendograma de árbol filogenético* es posible explicar el porque los clusters morado y verde se encuentran más cercanos, el cuadro rojo señala claramente que ambos clusters derivan de una misma rama, lo cual los hace más similares entre sí en referencia a los demás.
+
+
+<h4 style="color:#4FC2F7; font-family:courier;">Complete method</h4>
+En este método, ***"Complete"***, se observa un comportamiento parecido al método *"Average"*. La gráfica *"Dendogram"* muestra 4 clusters con tamaños proporcionales, la gráfica *"Cluster plot"* también los muestra clusterizados y es interesante el hecho de que aunque parecería más discriminativo este método, la distancia entre el cluster verde y el morado no cambio en comparación al método *"Average"*. Finalmente, la gráfica *"Optimal number of clusters"* predice correctamente 4 como número optimo, y es posible notarlo más significativo a los demás en comparación a lo observado en el método *"Average"*. El coeficiente aglomerativo es de *0.7498*, poco más de 6 unidades arriba del obtenido por *"Average"*, esto es coherente ya que el método ***"Complete"*** hace una discriminación mayor.
+```{r complete}
+## Getting dendogram
+ clust <- agnesClustering('complete')
+
+## Getting agglomerative plot
+ agglomPlot(clust)
+ 
+## Getting number of clusters plot
+ numClust('complete')
+ 
+## Showing agglomerative coefficient
+ print(paste('The agglomerative coefficient for complete method is: ', clust$ac,sep = ''))
+```
+![Complete tree](./complete_tree2.png)
+
+El *dendograma de árbol filogenético* muestra un comportamiento muy similar al observado con el método *"Single"*.
+
+
+<h4 style="color:#4FC2F7; font-family:courier;">Ward method</h4>
+El método ***"Ward"*** muestra resultados muy parecidos a los métodos *"Average"* y *"Complete"*. Para la gráfica *"Dendogram"* despliega 4 cluesters con tamaños similares, la gráfica *"Cluster plot"* clusteriza cuatro módulos mostrando el mismo comportamiento de proximidad entre el morado y verde, para la gráfica *"Optimal number of clusters*" se observa el 4 como número óptimo de clusters, al igual que los dos métodos anteriormente mencionados. Finalmente, se muestra el coeficiente aglomerativo más alto de todos, de *0.9308*. 
+```{r ward}
+## Getting dendogram
+ clust <- agnesClustering('ward')
+
+## Getting agglomerative plot
+ agglomPlot(clust)
+ 
+## Getting number of clusters plot
+ numClust('ward')
+ 
+## Showing agglomerative coefficient
+ print(paste('The agglomerative coefficient for ward method is: ', clust$ac,sep = ''))
+```
+![Ward tree](./ward_tree2.png)
+
+En este *dendograma de árbol filogenético* es notable la gran distancia entre grupos. Los clusters han sido seleccionados de manera más estricta, por lo que su separación es más notoria. Sin embargo, se puede observar una forma similar a los observados en *"Single"* y *"Complete"*.
+
+
+<h3 style="color:#5390E0; font-family:courier; background-color:#CCECFF;">7. Comparar los árboles obtenidos cuando se aplican los métodos single, average, complete y ward.</h3>
+Es posible observar el grado de clusterización estricta al comparar las ditancias donde empiezan a nacer los clados. Esto indicaria el lugar donde se comienza a tomar la divergencia local de cada grupo. Estas diferencias de distancia se marcan por medio de las lineas anaranjadas. 
+<h5 style="color:#4FC2F7; font-family:courier;">Single tree</h5>
+![](./single_tree1.png)
+<h5 style="color:#4FC2F7; font-family:courier;">Average tree</h5>
+![](./average_tree1.png)
+<h5 style="color:#4FC2F7; font-family:courier;">Complete tree</h5>
+![](./complete_tree1.png)
+<h5 style="color:#4FC2F7; font-family:courier;">Ward tree</h5>
+![](./ward_tree1.png)
+
+
+<h4 style="color:#4FC2F7; font-family:courier;">Filogenia real del modelo</h4>
+La filogenia fue obtenida por el software *"NGPhylogeny.fr"*.
+![ABC tree](./abc_tree.png)
+
+<h4 style="color:#4FC2F7; font-family:courier;">¿Cuál es el árbol más informativo?</h4>
+![Average tree](./average_tree1.png)
+![Average tree](./average_tree3.png)
+
+A partir de los árboles anteriores y los plots analizados, es posible observar que el método *"Average"* muestra un comportamiento de clusterización muy acertado. Sin embargo, las distancias observadas se alejan un poco de las observadas en la filogenia real.
+
+
+<h4 style="color:#4FC2F7; font-family:courier;">¿Cuál es el árbol menos informativo?</h4>
+![Single tree](./single_tree1.png)
+![Single tree](./single_tree3.png)
+
+Los árboles anteriores y plots analizados productos del método *"Single"* muestran una clusterización muy inestable. Los cuadros rojos señalan el error de sobrelape que ocurre entre los clusters azul y verde. También podemos que las distancias no son las más aproximadas a la filogenia real.
+
+
+<h4 style="color:#4FC2F7; font-family:courier;">¿Cuantos árboles son congruentes con la taxonomía de las proteínas?</h4>
+Los árboles que pueden considerarse más fieles a la filogeina real son los pertenecientes a los métodos *"Average"* y *"Complete"*, ya que su clusterización marca bien la separación de los grupos aunque se desvían un poco en la distancia entre ellos.
+
+<h3 style="color:#5390E0; font-family:courier; background-color:#CCECFF;">8. Obtener el "Agglomerative Coefficient" de todos los árboles.</h3>
+<h4 style="color:#4FC2F7; font-family:courier;">¿Cuál es el árbol con el agglomerative coefficient más alto?</h4>
+```
+The agglomerative coefficient for single method is: 0.5883762617971
+
+The agglomerative coefficient for average method is: 0.685058166109921
+
+The agglomerative coefficient for complete method is: 0.74985527448236
+
+The agglomerative coefficient for ward method is: 0.930818196076202
+```
+A partir de los resultados obtenidos, observamos que el coeficiente aglomerativo más alto es obtenido por el método *"Ward"*. A partir de esto, podemos confirmar lo anteriormente discutido referente a que el método con mayor poder de clusterización es *"Ward"*.
+
+![Ward tree](./ward_tree3.png)
+
+<h3 style="color:#4FC2F7; font-family:courier;">Referencias</h3>
+- *Lemoine F, Correia D, Lefort V, Doppelt-Azeroual O, Mareuil F, Cohen-Boulakia S, Gascuel O NGPhylogeny.fr: new generation phylogenetic services for non-specialists. Nucleic Acids Research 2019*
+
+- *Departamento de Estadística e Investigación Operativa, Universidad de Granada. (2011). Introducción al Análisis Cluster.
+Consideraciones generales. Recuperado de: https://www.ugr.es/~gallardo/pdf/cluster-1.pdf*
+
+
+
+
